@@ -6,12 +6,12 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"servidor intermediario entre sql y csv de pokemon"}
+    return {"mensaje":"servidor intermediario entre sql y csv de pokemon"}
 
 @app.get("/pokemon/csv/{clave}")
-def pokemon_csv(clave):
+def pokemon_csv(clave: str):
     inicio = time.perf_counter()
-    origen = "csv"
+    origen = "CSV"
     poke = db.busca_en_csv(clave)
 
     if poke is None:
@@ -28,15 +28,15 @@ def pokemon_csv(clave):
 @app.get("/pokemon/db/{clave}")
 def pokemon_db(clave: str):
     inicio = time.perf_counter()
-    origen = "SQLlite"
-    poke = db.busca_en_db(clave)
+    origen = "SQLite"
+    datos = db.busca_en_db(clave)
 
-    if poke is None:
+    if datos is None:
        origen = "PokeAPI"
-       poke = db.agregar_en_db(clave)
-    if poke is None:
+       datos = db.agregar_en_db(clave)
+    if datos is None:
         raise HTTPException(status_code=404, detail="Pokemon no encontrado")
 
     fin = time.perf_counter()
-    tiempo = round((fin - inicio) * 1000, 2)
-    return {"origen": origen, "pokemon": poke, "tiempo": tiempo}
+    tiempo_ms = round((fin - inicio) * 1000, 2)
+    return {"origen": origen, "pokemon": datos, "tiempo": tiempo_ms}

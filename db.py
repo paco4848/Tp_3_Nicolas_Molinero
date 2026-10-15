@@ -13,7 +13,7 @@ def consultar_api(url):
 
 
 def agregar_en_csv(clave):
-    clave = clave.lower().strip()
+    clave = str(clave).lower().strip()
     url = f"https://pokeapi.co/api/v2/pokemon/{clave}"
     datos = consultar_api(url)
     stats_dict = {} 
@@ -45,7 +45,7 @@ def agregar_en_csv(clave):
     return agregado
 
 def busca_en_csv(clave):
-    clave = clave.lower().strip()
+    clave = str(clave).lower().strip()
     
     try:
         with open("pokemones.csv", "r") as f:
@@ -53,7 +53,17 @@ def busca_en_csv(clave):
             for datos in lector:
                 if  clave == datos["nombre"].lower() or clave == datos["id"]:
                     print("se encontró el pokemon")
-                    return ({"id": datos["id"], "nombre": datos["nombre"], "tipo": datos["tipo"], "altura": datos["altura"], "peso": datos["peso"], "experiencia_base": datos["experiencia_base"], "hp": datos["hp"], "ataque": datos["ataque"], "defensa": datos["defensa"], "velocidad": datos["velocidad"]})
+                    return ({"id": int(datos["id"]),
+                             "nombre": datos["nombre"],
+                             "tipo": datos["tipo"],
+                             "altura": int(datos["altura"]),
+                             "peso": int(datos["peso"]),
+                             "experiencia_base": int(datos["experiencia_base"]),
+                             "hp": int(datos["hp"]),
+                             "ataque": int(datos["ataque"]),
+                             "defensa": int(datos["defensa"]),
+                             "velocidad": int(datos["velocidad"])
+                            })
     except FileNotFoundError:
         return None
 
@@ -89,7 +99,7 @@ def busca_en_db(clave):
             "ataque": datos[7],
             "defensa": datos[8],
             "velocidad": datos[9]
-        }
+            }
     return None
 
 def agregar_en_db(clave):
@@ -126,8 +136,8 @@ def agregar_en_db(clave):
         datos["id"],
         datos["nombre"],
         datos["tipo"],
-        datos["peso"],
         datos["altura"],
+        datos["peso"],
         datos["experiencia_base"],
         datos["hp"],
         datos["ataque"],
